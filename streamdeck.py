@@ -31,7 +31,7 @@ def refreshDisplay():
 	board.DISPLAY.refresh()
 
 def refreshAfterTileUpdate():
-	return int(themeConfig.get('displayRefreshMode', 'page') == 'tile')
+	return int(themeConfig.get('page', {}).get('transition', {}).get('change', None) == 'tile')
 
 def isIdle():
 	idleDuration = themeConfig.get('idle', {}).get('duration', None)
@@ -114,8 +114,8 @@ def transitionOut(transitionType):
 		fadeTo(0)
 
 def fadeTo(value, startFrom = None):
-	transitionStep = themeConfig.get('transitionStep', 0.1)
-	transitionSpeed = themeConfig.get('transitionSpeed', 0.05)
+	transitionStep = themeConfig.get('transitions', {}).get('fade', {}).get('step', 0.1)
+	transitionSpeed = themeConfig.get('transitions', {}).get('fade', {}).get('speed', 0.05)
 
 	if startFrom is None:
 		startFrom = board.DISPLAY.brightness
@@ -286,8 +286,13 @@ displayGroup.append(
 
 setPage(currentPage)
 
+initialPageTransition = themeConfig.get('page', {}).get('transition', {}).get('initial', 'cut')
+
+if initialPageTransition == 'tile':
+	initialPageTransition = 'cut'
+
 transitionIn(
-	themeConfig.get('splash', {}).get('transition', 'cut')
+	initialPageTransition
 )
 
 timeStateChanged = time.monotonic()
@@ -349,7 +354,7 @@ while True:
 
 			if buttonPage is not None:
 				transitionOut(
-					themeConfig.get('transitionType', None)
+					themeConfig.get('page', {}).get('transition', {}).get('change', None)
 				)
 
 				# perform a pagination action if pagination is enabled
@@ -361,7 +366,7 @@ while True:
 					setPage(buttonPage)
 
 				transitionIn(
-					themeConfig.get('transitionType', None)
+					themeConfig.get('page', {}).get('transition', {}).get('change', None)
 				)
 
 		previousButton = None

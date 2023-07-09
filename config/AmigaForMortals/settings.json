@@ -1,7 +1,15 @@
 {
 	"splash": {
-		"image": "Splash.bmp"
-		"duration": 5
+		"image": "Splash.bmp",
+		"duration": 5,
+		"transition": "fade"
+	},
+
+	"page": {
+		"transition": {
+			"initial": "fade",
+			"change": "tile"
+		}
 	},
 
 	"buttons": {

@@ -1,8 +1,15 @@
 {
-	"displayRefreshMode": "tile",
-
 	"idle": {
-		"duration": 150
+		"duration": 300,
+		"transition": "fade",
+
+	"page": {
+		"transition": {
+			"initial": "fade",
+			"change": "tile"
+		}
+	},
+
 	},
 
 	"images": {
