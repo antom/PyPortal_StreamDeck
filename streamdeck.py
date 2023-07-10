@@ -23,22 +23,8 @@ with open('/config/{}/settings.json'.format(theme)) as themeJSON:
 imgPath = '/config/{}/img/'.format(theme)
 
 # Functions
-def refreshDisplay():
-	if board.DISPLAY.auto_refresh:
-		return
-
-	board.DISPLAY.refresh()
-
-def refreshAfterTileUpdate():
-	return int(themeConfig.get('page', {}).get('transition', {}).get('change', None) == 'tile')
-
-def isIdle():
-	idleDuration = themeConfig.get('idle', {}).get('duration', None)
-
-	if idleDuration is None or currentTime < (timeStateChanged + idleDuration):
-		return 0
-
-	return 1
+def hasElapsedSince(duration, time):
+	return int(duration is not None and currentTime >= (time + duration))
 
 def getCurrentTouch():
 	time.sleep(0.05)
@@ -46,8 +32,8 @@ def getCurrentTouch():
 
 	if touch:
 		return {
-			'x': math.floor(touch[0] / (board.DISPLAY.width / getPageColumns())),
-			'y': math.floor(touch[1] / (board.DISPLAY.height / getPageRows()))
+			'x': math.floor(touch[0] / (board.DISPLAY.width / getPageColumns(currentPage))),
+			'y': math.floor(touch[1] / (board.DISPLAY.height / getPageRows(currentPage)))
 		}
 	else:
 		return {
@@ -73,17 +59,17 @@ def sendKeyCodes(keyCodes):
 			getKeyCode(keyCodes)
 		)
 
-def getPageRows():
-	return len(themeConfig['pages'][currentPage])
+def getPageRows(page):
+	return len(themeConfig['pages'][page])
 
-def getPageColumns():
-	return len(themeConfig['pages'][currentPage][0])
+def getPageColumns(page):
+	return len(themeConfig['pages'][page][0])
 
-def getTileWidth():
-	return math.floor(board.DISPLAY.width / getPageColumns())
+def getTileWidth(page):
+	return math.floor(board.DISPLAY.width / getPageColumns(page))
 
-def getTileHeight():
-	return math.floor(board.DISPLAY.height / getPageRows())
+def getTileHeight(page):
+	return math.floor(board.DISPLAY.height / getPageRows(page))
 
 def setBacklight(value: float):
 	value = max(0, min(1.0, value))
@@ -133,74 +119,70 @@ def fadeTo(value, startFrom = None):
 			setBacklight(board.DISPLAY.brightness - transitionStep)
 			time.sleep(transitionSpeed)
 
-def getBtnTileGrid(tileWidth, tileHeight):
-	if debugging:
-		print(
-			'getBtnTileGrid({0}, {1})'.format(tileWidth, tileHeight)
-		)
+def getBtnTileGrids():
+	btnTileGrids = {}
 
-	btns = displayio.OnDiskBitmap(
-		imgPath + '{0}x{1}.bmp'.format(tileWidth, tileHeight)
-	)
+	for page in range(0, len(themeConfig['pages'])):
+		tileWidth = getTileWidth(page)
+		tileHeight = getTileHeight(page)
+		size = '{0}x{1}'.format(tileWidth, tileHeight)
 
-	return displayio.TileGrid(
-		btns,
-		pixel_shader = btns.pixel_shader,
-		width = getPageColumns(),
-		height = getPageRows(),
-		tile_width = getTileWidth(),
-		tile_height = getTileHeight()
-	)
+		if size not in btnTileGrids:
+			if debugging:
+				print('Loading {}.bmp'.format(size))
+
+			btns = displayio.OnDiskBitmap(
+				imgPath + '{}.bmp'.format(size)
+			)
+
+			btnTileGrids[size] = displayio.TileGrid(
+				btns,
+				pixel_shader = btns.pixel_shader,
+				width = math.floor(board.DISPLAY.width / tileWidth),
+				height = math.floor(board.DISPLAY.height / tileHeight),
+				tile_width = tileWidth,
+				tile_height = tileHeight
+			)
+
+	return btnTileGrids
 
 def setTile(touch, state = 0):
 	if type(touch['x']) is int and type(touch['y']) is int:
-		i = (touch['y'] * getPageColumns()) + touch['x']
-		size = '{0}x{1}'.format(getTileWidth(), getTileHeight())
+		size = '{0}x{1}'.format(getTileWidth(currentPage), getTileHeight(currentPage))
 		btn = themeConfig['pages'][currentPage][touch['y']][touch['x']]['button']
-		btnGrid[i] = themeConfig['buttons'][size][btn][state]
+		btnTileGrids[size][touch['x'], touch['y']] = themeConfig['buttons'][size][btn][state]
+		board.DISPLAY.refresh()
 
-		if refreshAfterTileUpdate() or state > 0:
-			refreshDisplay()
 
 def setPage(index, refreshAfterUpdate = 1):
-	global currentTouch
 	global currentPage
-	global btnGrid
 
 	if index < 0 or index >= len(themeConfig['pages']):
 		return
 
-	previousPageRows = getPageRows()
-	previousPageColumns = getPageColumns()
-
+	previousPage = currentPage
 	currentPage = index
 
-	if getPageRows() != previousPageRows or getPageColumns() != previousPageColumns:
-		displayGroup.remove(
-			btnGrid
-		)
-
-		btnGrid = getBtnTileGrid(
-			getTileWidth(),
-			getTileHeight()
-		)
-
+	if previousPage is None:
 		displayGroup.append(
-			btnGrid
+			btnTileGrids.get(
+				'{0}x{1}'.format(getTileWidth(currentPage), getTileHeight(currentPage))
+			)
+		)
+	elif getPageRows(currentPage) != getPageRows(previousPage) or getPageColumns(currentPage) != getPageColumns(previousPage):
+		displayGroup[0] = btnTileGrids.get(
+			'{0}x{1}'.format(getTileWidth(currentPage), getTileHeight(currentPage))
 		)
 
 	if debugging:
 		print('Current page: ' + str(currentPage))
 
-	for tileY in range(0, getPageRows()):
-		for tileX in range(0, getPageColumns()):
+	for tileY in range(0, getPageRows(currentPage)):
+		for tileX in range(0, getPageColumns(currentPage)):
 			setTile({
 				'x': tileX,
 				'y': tileY
 			})
-
-	if not refreshAfterTileUpdate():
-		refreshDisplay()
 
 def prevPage():
 	if currentPage > 0:
@@ -236,7 +218,7 @@ def displaySplashScreen():
 		splashGrid
 	)
 
-	refreshDisplay()
+	board.DISPLAY.refresh()
 
 	transitionIn(
 		themeConfig.get('splash', {}).get('transition', 'fade')
@@ -254,7 +236,7 @@ def displaySplashScreen():
 		splashGrid
 	)
 
-	refreshDisplay()
+	board.DISPLAY.refresh()
 
 # Turn off display auto refreshing
 board.DISPLAY.auto_refresh = 0
@@ -294,24 +276,17 @@ if board.DISPLAY.brightness > 0:
 	setBacklight(0)
 
 # Configure initial values
-currentPage = 0
+btnTileGrids = getBtnTileGrids()
+currentPage = None
 currentTouch = getCurrentTouch()
 previousTouch = currentTouch
 currentButton = None
 previousButton = None
 timeTouched = None
 idleMode = 0
+idleDuration = themeConfig.get('idle', {}).get('duration', None)
 
-btnGrid = getBtnTileGrid(
-	getTileWidth(),
-	getTileHeight()
-)
-
-displayGroup.append(
-	btnGrid
-)
-
-setPage(currentPage)
+setPage(0)
 
 initialPageTransition = themeConfig.get('page', {}).get('transition', {}).get('initial', 'cut')
 
@@ -335,7 +310,7 @@ while True:
 	currentTouch = getCurrentTouch()
 
 	# check & handle entering/exiting idle state
-	if isIdle():
+	if hasElapsedSince(idleDuration, timeStateChanged):
 		if not idleMode and currentTouch['x'] is None and currentTouch['y'] is None:
 			if debugging:
 				print('Entering idle mode')
@@ -365,12 +340,15 @@ while True:
 				themeConfig.get('idle', {}).get('transition', 'fade')
 			)
 
+			currentTime = time.monotonic()
 			timeStateChanged = currentTime
 
 			continue
 
 	# check button up - reset stuff when the touch has been released
 	if previousTouch != currentTouch and type(previousTouch['x']) is int and type(previousTouch['y']) is int:
+		timeStateChanged = currentTime
+
 		setTile(
 			previousTouch
 		)
@@ -396,6 +374,9 @@ while True:
 					themeConfig.get('page', {}).get('transition', {}).get('change', None)
 				)
 
+				currentTime = time.monotonic()
+				timeStateChanged = currentTime
+
 		previousButton = None
 		timeTouched = None
 
@@ -413,10 +394,10 @@ while True:
 		if currentButton == previousButton:
 			repeatAfter = previousButton.get('repeatAfter', themeConfig.get('repeatAfter', None))
 
-			if repeatAfter is None or currentTime < (timeTouched + repeatAfter):
-				continue
-			else:
+			if hasElapsedSince(repeatAfter, timeTouched):
 				timeTouched = currentTime
+			else:
+				continue
 
 		if debugging:
 			print(currentButton)
