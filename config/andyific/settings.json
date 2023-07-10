@@ -2,6 +2,10 @@
 	"idle": {
 		"duration": 300,
 		"transition": "fade",
+		"keyCodes": {
+			"exit": "ESCAPE"
+		}
+	},
 
 	"page": {
 		"transition": {
@@ -10,36 +14,39 @@
 		}
 	},
 
-	},
-
-	"images": {
-		"buttons": "streaming-buttons.bmp"
+	"transitions": {
+		"fade": {
+			"step": 0.1,
+			"speed": 0.05
+		}
 	},
 
 	"buttons": {
-		"abort": [0, 1],
-		"als": [2, 3],
-		"bitsCheered": [4, 5],
-		"blank": [6, 7],
-		"brb": [8, 9],
-		"eight": [10, 11],
-		"end": [12, 13],
-		"fridgeNoise": [14, 15],
-		"goodJob": [16, 17],
-		"hd60x": [18, 19],
-		"intro": [20, 21],
-		"main": [22, 23],
-		"newFollower": [24, 25],
-		"newSubscriber": [26, 27],
-		"nextPage": [28, 29],
-		"refreshBrowserSource": [30, 31],
-		"scrollStars": [32, 33],
-		"sfx": [34, 35],
-		"toggleCameraAndMic": [36, 37],
-		"toggleEmotes": [38, 39],
-		"toggleShiftForRiscOS": [40, 41],
-		"toggleStars": [42, 43],
-		"toggleText": [44, 45]
+		"80x80": {
+			"abort": [0, 1],
+			"als": [2, 3],
+			"bitsCheered": [4, 5],
+			"blank": [6, 7],
+			"brb": [8, 9],
+			"eight": [10, 11],
+			"end": [12, 13],
+			"fridgeNoise": [14, 15],
+			"goodJob": [16, 17],
+			"hd60x": [18, 19],
+			"intro": [20, 21],
+			"main": [22, 23],
+			"newFollower": [24, 25],
+			"newSubscriber": [26, 27],
+			"nextPage": [28, 29],
+			"refreshBrowserSource": [30, 31],
+			"scrollStars": [32, 33],
+			"sfx": [34, 35],
+			"toggleCameraAndMic": [36, 37],
+			"toggleEmotes": [38, 39],
+			"toggleShiftForRiscOS": [40, 41],
+			"toggleStars": [42, 43],
+			"toggleText": [44, 45]
+		}
 	},
 
 	"pages": [

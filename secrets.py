@@ -10,5 +10,5 @@ secrets = {
     'aio_username': 'YOUR_ADAFRUIT_ACCOUNT_USERNAME',
     'aio_key': 'YOUR_ADAFRUITIO_KEY',
     'streamDeckDebug': 0,
-    'streamDeckTheme': 'AmigaForMortals',
+    'streamDeckTheme': 'demo',
 }

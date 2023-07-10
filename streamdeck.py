@@ -6,7 +6,6 @@ import math
 import time
 import usb_hid
 
-from adafruit_button import Button
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
 from adafruit_hid.keycode import Keycode
@@ -134,23 +133,61 @@ def fadeTo(value, startFrom = None):
 			setBacklight(board.DISPLAY.brightness - transitionStep)
 			time.sleep(transitionSpeed)
 
+def getBtnTileGrid(tileWidth, tileHeight):
+	if debugging:
+		print(
+			'getBtnTileGrid({0}, {1})'.format(tileWidth, tileHeight)
+		)
+
+	btns = displayio.OnDiskBitmap(
+		imgPath + '{0}x{1}.bmp'.format(tileWidth, tileHeight)
+	)
+
+	return displayio.TileGrid(
+		btns,
+		pixel_shader = btns.pixel_shader,
+		width = getPageColumns(),
+		height = getPageRows(),
+		tile_width = getTileWidth(),
+		tile_height = getTileHeight()
+	)
+
 def setTile(touch, state = 0):
 	if type(touch['x']) is int and type(touch['y']) is int:
 		i = (touch['y'] * getPageColumns()) + touch['x']
-		btn = themeConfig['pages'][currentPage][touch['y']][touch['x']]["button"]
-		btnGrid[i] = themeConfig['buttons'][btn][state]
+		size = '{0}x{1}'.format(getTileWidth(), getTileHeight())
+		btn = themeConfig['pages'][currentPage][touch['y']][touch['x']]['button']
+		btnGrid[i] = themeConfig['buttons'][size][btn][state]
 
-		if refreshAfterTileUpdate():
+		if refreshAfterTileUpdate() or state > 0:
 			refreshDisplay()
 
 def setPage(index, refreshAfterUpdate = 1):
 	global currentTouch
 	global currentPage
+	global btnGrid
 
 	if index < 0 or index >= len(themeConfig['pages']):
 		return
 
+	previousPageRows = getPageRows()
+	previousPageColumns = getPageColumns()
+
 	currentPage = index
+
+	if getPageRows() != previousPageRows or getPageColumns() != previousPageColumns:
+		displayGroup.remove(
+			btnGrid
+		)
+
+		btnGrid = getBtnTileGrid(
+			getTileWidth(),
+			getTileHeight()
+		)
+
+		displayGroup.append(
+			btnGrid
+		)
 
 	if debugging:
 		print('Current page: ' + str(currentPage))
@@ -238,21 +275,6 @@ touchScreen = adafruit_touchscreen.Touchscreen(
 	)
 )
 
-# Configure initial values
-currentPage = 0
-currentTouch = getCurrentTouch()
-previousTouch = currentTouch
-currentButton = None
-previousButton = None
-timeTouched = None
-idleMode = 0
-
-btns = displayio.OnDiskBitmap(
-	imgPath + themeConfig.get('images', {}).get('buttons', 'Buttons.bmp')
-)
-
-btnVariations = math.floor(btns.width / (board.DISPLAY.width / getPageColumns()));
-
 # Initialise keyboards
 keyboard = Keyboard(usb_hid.devices)
 keyboard_layout = KeyboardLayoutUS(keyboard)
@@ -271,13 +293,18 @@ displaySplashScreen()
 if board.DISPLAY.brightness > 0:
 	setBacklight(0)
 
-btnGrid = displayio.TileGrid(
-	btns,
-	pixel_shader = btns.pixel_shader,
-	width = getPageColumns(),
-	height = getPageRows(),
-	tile_width = getTileWidth(),
-	tile_height = getTileHeight()
+# Configure initial values
+currentPage = 0
+currentTouch = getCurrentTouch()
+previousTouch = currentTouch
+currentButton = None
+previousButton = None
+timeTouched = None
+idleMode = 0
+
+btnGrid = getBtnTileGrid(
+	getTileWidth(),
+	getTileHeight()
 )
 
 displayGroup.append(
@@ -404,7 +431,6 @@ while True:
 		sendKeyCodes(
 			currentButton.get('keyCodes', None)
 		)
-
 
 		# make a note of what button we've just used
 		previousButton = currentButton
