@@ -39,6 +39,7 @@ A project to use an [Adafruit PyPortal](https://www.adafruit.com/product/4116) a
 
 ```
     'streamDeckDebug': 0,      # Turn console logs on/off
+    'streamDeckUsesWiFi': 1,   # Connect to WiFi if required (e.g. for triggering URL requests)
     'streamDeckTheme': 'demo', # Which theme to use (a corresponding folder needs to exist in `/config`)
 ```
 
@@ -96,7 +97,10 @@ e.g.
 
 Pages define how to arrange the button faces & what they will control.
 
-Primarily these will be used to trigger single or multiple `keyCodes` for key presses. They can also trigger `page` changes (next / previous / specific number).
+Primarily these will be used to trigger:
+- Single or multiple `keyCodes` for key presses.
+- Changing `page` (next / previous / specific number).
+- A HTTP POST `request` to a specific `url` with a `json` request body.
 
 By default, key presses will only be sent once but they can by set to `repeatAfter` a specified number of seconds. If `repeatAfter` is set at the root, it will apply to all buttons but can be overridden by button.
 
@@ -124,6 +128,27 @@ e.g.
 			{
 				"button": "nextPageButton",
 				"page": "next"
+			}
+		],
+		[
+			{
+				"button": "firstButton"
+				"request": {
+					"url": "https://api.funtranslations.com/translate/yoda.json",
+					"json": {
+						"text": "The first button on this page was pressed"
+					}
+				}
+			},
+
+			{
+				"button": "secondButton"
+				"request": {
+					"url": "https://api.funtranslations.com/translate/yoda.json",
+					"json": {
+						"text": "The second button on this page was pressed"
+					}
+				}
 			}
 		]
 	]

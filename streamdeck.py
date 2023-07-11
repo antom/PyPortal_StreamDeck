@@ -1,14 +1,20 @@
 import adafruit_touchscreen
 import board
+import busio
 import displayio
 import json
 import math
 import time
 import usb_hid
+import adafruit_requests as requests
+import adafruit_esp32spi.adafruit_esp32spi_socket as socket
+from adafruit_esp32spi import adafruit_esp32spi
+from adafruit_esp32spi import adafruit_esp32spi_wifimanager
 
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
 from adafruit_hid.keycode import Keycode
+from digitalio import DigitalInOut
 from secrets import secrets
 
 debugging = secrets.get('streamDeckDebug', 0)
@@ -238,6 +244,57 @@ def displaySplashScreen():
 
 	board.DISPLAY.refresh()
 
+def sendRequest(url, json = {}, headers = {}):
+	try:
+		response = wifi.post(
+			url,
+			json = json,
+			headers = headers
+		)
+	except Exception as e:
+		print('Request exception: ', e)
+		return None
+
+	if response.status_code != 200:
+		print('Request status: ', response.status_code)
+		return None
+
+	print(response.text)
+	return response.text
+
+# Internet Connectivity via ESP32 using SPI
+def getESP32():
+	return adafruit_esp32spi.ESP_SPIcontrol(
+		busio.SPI(
+			board.SCK,
+			board.MOSI,
+			board.MISO
+		),
+		DigitalInOut(board.ESP_CS),
+		DigitalInOut(board.ESP_BUSY),
+		DigitalInOut(board.ESP_RESET)
+	)
+
+def getWiFiManager():
+	esp = getESP32()
+
+	return adafruit_esp32spi_wifimanager.ESPSPI_WiFiManager(
+		esp,
+		{
+			'ssid': secrets['ssid'],
+			'password': secrets['password']
+		},
+		debug = debugging
+	)
+
+def checkWiFiConnection():
+	if secrets.get('streamDeckUsesWiFi', 0) and not wifi.esp.is_connected:
+		wifi.connect()
+
+if secrets.get('streamDeckUsesWiFi', 0):
+	wifi = getWiFiManager()
+	checkWiFiConnection()
+
 # Turn off display auto refreshing
 board.DISPLAY.auto_refresh = 0
 
@@ -302,6 +359,8 @@ timeStateChanged = time.monotonic()
 # main loop
 while True:
 	currentTime = time.monotonic()
+
+	checkWiFiConnection()
 
 	# make a note of the previous touch state
 	previousTouch = currentTouch
@@ -412,6 +471,18 @@ while True:
 		sendKeyCodes(
 			currentButton.get('keyCodes', None)
 		)
+
+		# get button requests
+		buttonRequest = currentButton.get('request', None)
+
+		if buttonRequest is not None and buttonRequest.get('url', False) and buttonRequest.get('json', False):
+			sendRequest(
+				buttonRequest.get('url', '#'),
+				buttonRequest.get('json', {}),
+				{
+					#"Authorization": "Bearer {api_key}",
+				}
+			)
 
 		# make a note of what button we've just used
 		previousButton = currentButton
