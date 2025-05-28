@@ -17,35 +17,46 @@
 	"transitions": {
 		"fade": {
 			"step": 0.1,
-			"speed": 0.05
+			"speed": 0.025
 		}
 	},
 
 	"buttons": {
 		"80x80": {
-			"abort": [0, 1],
-			"als": [2, 3],
-			"bitsCheered": [4, 5],
-			"blank": [6, 7],
-			"brb": [8, 9],
-			"eight": [10, 11],
-			"end": [12, 13],
-			"fridgeNoise": [14, 15],
-			"goodJob": [16, 17],
-			"hd60x": [18, 19],
+			"blank": [0, 1],
+			"abort": [2, 3],
+			"goBack": [4, 5],
+			"prevPage": [6, 7],
+			"nextPage": [8, 9],
+			"scenes": [10, 11],
+			"obs": [12, 13],
+			"overlays": [14, 15],
+			"sfx": [16, 17],
+			"browserSource": [18, 19],
 			"intro": [20, 21],
 			"main": [22, 23],
-			"newFollower": [24, 25],
-			"newSubscriber": [26, 27],
-			"nextPage": [28, 29],
-			"refreshBrowserSource": [30, 31],
-			"scrollStars": [32, 33],
-			"sfx": [34, 35],
-			"toggleCameraAndMic": [36, 37],
-			"toggleEmotes": [38, 39],
-			"toggleShiftForRiscOS": [40, 41],
-			"toggleStars": [42, 43],
-			"toggleText": [44, 45]
+			"brb": [24, 25],
+			"end": [26, 27],
+			"als": [28, 29],
+			"goodJob": [30, 31],
+			"toggleEmotes": [32, 33],
+			"replayLatestFollower": [34, 35],
+			"replayLatestSubscriber": [36, 37],
+			"replayLatestRaider": [38, 39],
+			"replayLatestCheer": [40, 41],
+			"fridgeNoise": [42, 43],
+			"toggleCamera": [44, 45],
+			"toggleGame": [46, 47],
+			"toggleMic": [48, 49],
+			"alerts": [50, 51],
+			"refreshBrowserSource": [52, 53],
+			"eight": [54, 55],
+			"bread": [56, 57],
+			"mouldyBread": [58, 59],
+			"blank2": [60, 61],
+			"mouldyBread2": [62, 63],
+			"crystal": [64, 65],
+			"boop": [66, 67]
 		}
 	},
 
@@ -53,32 +64,43 @@
 		[
 			[
 				{
-					"button": "intro",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_ONE"
-					]
+					"button": "scenes",
+					"page": 1
 				},
+
 				{
-					"button": "main",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_TWO"
-					]
+					"button": "obs",
+					"page": 2
 				},
+
 				{
-					"button": "brb",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_THREE"
-					]
+					"button": "overlays",
+					"page": 4
 				},
+
 				{
-					"button": "end",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_FOUR"
-					]
+					"button": "alerts",
+					"page": 3
+				}
+			],
+
+			[
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "sfx",
+					"page": 5
+				},
+
+				{
+					"button": "browserSource",
+					"page": 6
 				}
 			],
 
@@ -87,58 +109,20 @@
 					"button": "abort",
 					"keyCodes": [
 						"CONTROL",
-						"KEYPAD_FIVE"
-					]
-				},
-				{
-					"button": "toggleEmotes",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_SIX"
-					]
-				},
-				{
-					"button": "goodJob",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_SEVEN"
-					]
-				},
-				{
-					"button": "eight",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_EIGHT"
-					],
-					"repeatAfter": 0.8
-				}
-			],
-
-			[
-				{
-					"button": "newFollower",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_NINE"
-					]
-				},
-				{
-					"button": "newSubscriber",
-					"keyCodes": [
-						"CONTROL",
 						"KEYPAD_ZERO"
 					]
 				},
+
 				{
-					"button": "bitsCheered",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_PERIOD"
-					]
+					"button": "blank"
 				},
+
 				{
-					"button": "nextPage",
-					"page": "next"
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
 				}
 			]
 		],
@@ -146,91 +130,102 @@
 		[
 			[
 				{
-					"button": "sfx",
+					"button": "intro",
 					"keyCodes": [
 						"CONTROL",
-						"COMMAND",
 						"KEYPAD_ONE"
-					]
+					],
+					"page": 0
 				},
+
 				{
-					"button": "fridgeNoise",
+					"button": "main",
 					"keyCodes": [
 						"CONTROL",
-						"COMMAND",
 						"KEYPAD_TWO"
-					]
+					],
+					"page": 0
 				},
+
 				{
-					"button": "toggleShiftForRiscOS",
+					"button": "brb",
 					"keyCodes": [
 						"CONTROL",
-						"COMMAND",
 						"KEYPAD_THREE"
-					]
+					],
+					"page": 0
 				},
+
 				{
-					"button": "hd60x",
+					"button": "end",
 					"keyCodes": [
 						"CONTROL",
-						"COMMAND",
 						"KEYPAD_FOUR"
-					]
+					],
+					"page": 0
 				}
 			],
 
 			[
 				{
-					"button": "toggleStars",
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			],
+
+			[
+				{
+					"button": "goBack",
+					"page": 0
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			]
+		],
+
+		[
+			[
+				{
+					"button": "toggleCamera",
 					"keyCodes": [
 						"CONTROL",
-						"COMMAND",
 						"KEYPAD_FIVE"
 					]
 				},
+
 				{
-					"button": "scrollStars",
+					"button": "toggleGame",
 					"keyCodes": [
 						"CONTROL",
-						"COMMAND",
 						"KEYPAD_SIX"
 					]
 				},
-				{
-					"button": "als",
-					"keyCodes": [
-						"CONTROL",
-						"COMMAND",
-						"KEYPAD_SEVEN"
-					]
-				},
-				{
-					"button": "toggleCameraAndMic",
-					"keyCodes": [
-						"CONTROL",
-						"COMMAND",
-						"KEYPAD_EIGHT"
-					]
-				}
-			],
 
-			[
 				{
-					"button": "toggleText",
-					"keyCodes": [
-						"CONTROL",
-						"COMMAND",
-						"KEYPAD_NINE"
-					]
+					"button": "blank"
 				},
-				{
-					"button": "toggleText",
-					"keyCodes": [
-						"CONTROL",
-						"COMMAND",
-						"KEYPAD_ZERO"
-					]
-				},
+
 				{
 					"button": "refreshBrowserSource",
 					"keyCodes": [
@@ -239,9 +234,331 @@
 						"KEYPAD_PERIOD"
 					]
 				},
+			],
+
+			[
 				{
-					"button": "nextPage",
-					"page": "previous"
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			],
+
+			[
+				{
+					"button": "goBack",
+					"page": 0
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "toggleMic",
+					"keyCodes": [
+						"LEFT_SHIFT",
+						"OPTION",
+						"COMMAND",
+						"M"
+					]
+				}
+			]
+		],
+
+		[
+			[
+				{
+					"button": "replayLatestFollower",
+					"keyCodes": [
+						"CONTROL",
+						"KEYPAD_NINE"
+					],
+					"page": 0
+				},
+
+				{
+					"button": "replayLatestSubscriber",
+					"keyCodes": [
+						"CONTROL",
+						"KEYPAD_ZERO"
+					],
+					"page": 0
+				},
+
+				{
+					"button": "replayLatestCheer",
+					"keyCodes": [
+						"CONTROL",
+						"KEYPAD_PERIOD"
+					],
+					"page": 0
+				},
+
+				{
+					"button": "replayLatestRaider",
+					"keyCodes": [
+						"CONTROL",
+						"KEYPAD_ASTERISK"
+					],
+					"page": 0
+				},
+			],
+
+			[
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			],
+
+			[
+				{
+					"button": "goBack",
+					"page": 0
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			]
+		],
+
+		[
+			[
+				{
+					"button": "goodJob",
+					"keyCodes": [
+						"CONTROL",
+						"KEYPAD_SEVEN"
+					],
+					"page": 0
+				},
+
+				{
+					"button": "toggleEmotes",
+					"keyCodes": [
+						"CONTROL",
+						"COMMAND",
+						"KEYPAD_ASTERISK"
+					]
+				},
+
+				{
+					"button": "fridgeNoise",
+					"keyCodes": [
+						"CONTROL",
+						"COMMAND",
+						"KEYPAD_TWO"
+					],
+					"page": 0
+				},
+
+				{
+					"button": "blank"
+				}
+			],
+
+			[
+				{
+					"button": "bread",
+					"page": 0
+				},
+
+				{
+					"button": "mouldyBread",
+					"page": 0
+				},
+
+				{
+					"button": "boop",
+					"page": 0
+				},
+
+				{
+					"button": "crystal",
+					"page": 0
+				}
+			]
+
+			[
+				{
+					"button": "goBack",
+					"page": 0
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			]
+		],
+
+		[
+			[
+				{
+					"button": "eight",
+					"keyCodes": [
+						"CONTROL",
+						"KEYPAD_EIGHT"
+					],
+					"repeatAfter": 0.8
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			],
+
+			[
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			],
+
+			[
+				{
+					"button": "goBack",
+					"page": 0
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "abort",
+					"keyCodes": [
+						"CONTROL",
+						"KEYPAD_ZERO"
+					]
+				}
+			]
+		],
+
+		[
+			[
+				{
+					"button": "refreshBrowserSource",
+					"keyCodes": [
+						"CONTROL",
+						"COMMAND",
+						"KEYPAD_PERIOD"
+					]
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			],
+
+			[
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				}
+			],
+
+
+			[
+				{
+					"button": "goBack",
+					"page": 0
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
+				},
+
+				{
+					"button": "blank"
 				}
 			]
 		]
