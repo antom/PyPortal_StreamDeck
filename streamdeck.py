@@ -264,9 +264,7 @@ keyboard_layout = KeyboardLayoutUS(keyboard)
 # Initialise display group
 displayGroup = displayio.Group()
 
-board.DISPLAY.show(
-	displayGroup
-)
+board.DISPLAY.root_group = displayGroup
 
 # Show splash image on startup
 displaySplashScreen()
