@@ -4,6 +4,7 @@ A project to use an [Adafruit PyPortal](https://www.adafruit.com/product/4116) a
 
 ## Features
 
+- Buttons can send a message via serial that the host can interpret.
 - Buttons can trigger single or multiple keypresses.
 - Multiple pages of buttons.
 - Different button grid sizes across pages (e.g. 12 buttons in a 4x3 grid on one page, 6 buttons in a 2x3 grid on another etc).
@@ -72,79 +73,6 @@ e.g. Having 2x4 button faces in the file:
 
 This file sets up various customisations for your theme, such as the button faces, pages, layouts & what each button does.
 
-#### Button Faces
-
-Button faces are grouped into button size (`WxH`) & specify what tile index to use for their untouched & touched states. These can then be referred to in the Pages section.
-
-e.g.
-
-```
-"buttons": {
-	"160x120": {
-		"firstButton": [0, 1],
-		"secondButton": [2, 3],
-		"nextButton": [4, 5]
-	},
-
-	"320x60": {
-		"button": [0, 1]
-	}
-},
-```
-
-#### Pages
-
-Pages define how to arrange the button faces & what they will control.
-
-Primarily these will be used to trigger single or multiple `keyCodes` for key presses. They can also trigger `page` changes (next / previous / specific number).
-
-By default, key presses will only be sent once but they can by set to `repeatAfter` a specified number of seconds. If `repeatAfter` is set at the root, it will apply to all buttons but can be overridden by button.
-
-e.g.
-
-```
-"pages": [
-	[
-		[
-			{
-				"button": "firstButton",
-				"keyCodes": "1"
-			},
-			{
-				"button": "firstButton",
-				"keyCodes": ["SHIFT", "1"]
-			}
-		],
-		[
-			{
-				"button": "secondButton",
-				"keyCodes": "2",
-				"repeatAfter": 2
-			},
-			{
-				"button": "nextPageButton",
-				"page": "next"
-			}
-		]
-	]
-]
-```
-
-#### Page
-
-Shared setting for all pages. Specifies what `transition` to use for a page `change` and what to use for the `initial` page shown.
-
-e.g.
-
-```
-"page": {
-	"transition": {
-		"initial": "fade",
-		"change": "fade"
-	}
-},
-```
-
 #### Transitions
 
 Allows values for the transitions to be customised - e.g. `step` specifies how much it changes for every update & `speed` defines how quickly each update takes to be made.
@@ -157,6 +85,19 @@ e.g.
 		"step": 0.1,
 		"speed": 0.05
 	}
+},
+```
+
+#### Idle Mode
+
+Optionally set to transition in/out from displaying anything on the screen if inactive for a specified amount of time.
+
+e.g.
+
+```
+"idle": {
+	"duration": 300,
+	"transition": "fade"
 },
 ```
 
@@ -174,18 +115,100 @@ e.g.
 },
 ```
 
-#### Idle Mode
+#### Image
 
-Optionally set to transition in/out from displaying anything on the screen if inactive for a specified amount of time. Can also be set to trigger a key press on `enter` or `exit`.
+Images define how the button faces are grouped into button size (`WxH`) & specify what tile index to use for their untouched & touched states. These can then be referred to in the Page Layout section.
 
 e.g.
 
 ```
-"idle": {
-	"duration": 300,
-	"transition": "fade",
-	"keyCodes": {
+"image": {
+	"160x120": {
+		"topLeftButton": [0, 1],
+		"topRightButton": [2, 3],
+		"bottomLeftButton": [4, 5],
+		"bottomRightButton": [6, 7]
+	},
+
+	"320x60": {
+		"button": [0, 1]
+	}
+},
+```
+
+#### Button
+
+Defines what behaviour a button performs when triggered.
+
+Button presses can trigger a `next`, `previous` or specific page number change if included in the `pageNavigation` section.
+
+Buttons can be set to send a message to the host via serial if included in the `sendMsg` section. This message can them be interpreted by and acted upon by a suitable background process (e.g. Hammerspoon on Mac).
+
+By default, button will only trigger their action once when  pressed, but they can by set to `repeatAfter` a specified number of seconds. If `repeatAfter` is set at the root, it will apply to all buttons but can be overridden by button.
+
+e.g.
+
+```
+"buttons": [
+	"pageNavigation": {
+		"nextPageButton": "next",
+		"previousPageButton": "previous",
+		"goToFirstPageButton": 0
+	},
+
+	"sendMsg": [
+		"firstAction",
+		"secondAction"
+	],
+
+	"repeatAfter": {
+		"repeatingButton": 2
+	}
+]
+```
+
+#### Page
+
+Defines the layouts & shared setting for all pages. Specifies what `transition` to use for a page `change` and what to use for the `initial` page shown.
+
+e.g.
+
+```
+"page": {
+	"transition": {
+		"initial": "fade",
+		"change": "fade"
+	},
+
+	"layout": [
+		[
+			[
+				"topLeftButton",
+				"topRightButton"
+			],
+
+			[
+				'bottomLeftButton',
+				'bottomRightButton'
+			]
+		]
+	]
+},
+```
+
+#### Keyboard Key Codes
+
+This section defines any single or multiple keyboard keycodes to send to the host for particular actions such as button presses or entering/exiting Idle Mode.
+
+```
+"keyCodes": {
+	"idle": {
 		"exit": "ESCAPE"
+	},
+
+	"buttons": {
+		"oneButton": "1",
+		"exclamationMarkButton": ["SHIFT", "1"]
 	}
 },
 ```

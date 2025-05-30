@@ -5,16 +5,10 @@
 		"transition": "fade"
 	},
 
-	"page": {
-		"transition": {
-			"initial": "fade",
-			"change": "tile"
-		}
-	},
-
-	"buttons": {
+	"image": {
 		"80x80": {
-			"turnPage": [0, 23],
+			"previousPage": [0, 23],
+			"nextPage": [0, 23],
 			"amiga": [1, 24],
 			"cam": [2, 25],
 			"ads": [3, 26],
@@ -40,142 +34,90 @@
 		}
 	},
 
-	"pages": [
-		[
+	"buttons": {
+		"pageNavigation": {
+			"previousPage": "previous",
+			"nextPage": "next"
+		}
+	},
+
+	"page": {
+		"transition": {
+			"initial": "fade",
+			"change": "tile"
+		},
+
+		"layout": [
 			[
-				{
-					"button": "amiga",
-					"keyCodes": "A"
-				},
+				[
+					"amiga",
+					"cam",
+					"ads",
+					"end"
+				],
 
-				{
-					"button": "cam",
-					"keyCodes": "B"
-				},
+				[
+					"discord",
+					"gameOn",
+					"startStop",
+					"mic"
+				],
 
-				{
-					"button": "ads",
-					"keyCodes": "C"
-				},
-
-				{
-					"button": "end",
-					"keyCodes": "D"
-				},
+				[
+					"nextPage",
+					"cheer",
+					"welcomeTheFuckIn",
+					"dead"
+				]
 			],
 
 			[
-				{
-					"button": "discord",
-					"keyCodes": "E"
-				},
+				[
+					"intro",
+					"gear",
+					"room",
+					"brb"
+				],
 
-				{
-					"button": "gameOn",
-					"keyCodes": "F"
-				},
+				[
+					"chewy",
+					"letsGo",
+					"fatality",
+					"amigaPuke"
+				],
 
-				{
-					"button": "startStop",
-					"keyCodes": "G"
-				},
-
-				{
-					"button": "mic",
-					"keyCodes": "H"
-				},
-			],
-
-			[
-				{
-					"button": "turnPage",
-					"page": "next"
-				},
-
-				{
-					"button": "cheer",
-					"keyCodes": "J"
-				},
-
-				{
-					"button": "welcomeTheFuckIn",
-					"keyCodes": "K"
-				},
-
-				{
-					"button": "dead",
-					"keyCodes": "L"
-				},
-			],
-		],
-
-		[
-			[
-				{
-					"button": "intro",
-					"keyCodes": "M"
-				},
-
-				{
-					"button": "gear",
-					"keyCodes": "N"
-				},
-
-				{
-					"button": "room",
-					"keyCodes": "O"
-				},
-
-				{
-					"button": "brb",
-					"keyCodes": "P"
-				},
-			],
-
-			[
-				{
-					"button": "chewy",
-					"keyCodes": "Q"
-				},
-
-				{
-					"button": "letsGo",
-					"keyCodes": "R"
-				},
-
-				{
-					"button": "fatality",
-					"keyCodes": "S"
-				},
-
-				{
-					"button": "amigaPuke",
-					"keyCodes": "T"
-				},
-			],
-
-			[
-				{
-					"button": "turnPage",
-					"page": "previous"
-				},
-
-				{
-					"button": "phrasing",
-					"keyCodes": "V"
-				},
-
-				{
-					"button": "onlyAmiga",
-					"keyCodes": "W"
-				},
-
-				{
-					"button": "resetDeaths",
-					"keyCodes": "X"
-				},
-
-			],
+				[
+					"previousPage",
+					"phrasing",
+					"onlyAmiga",
+					"resetDeaths"
+				]
+			]
 		]
-	]
+	},
+
+	"keyCodes": {
+		"ads": "C",
+		"amiga": "A",
+		"amigaPuke": "T",
+		"brb": "P",
+		"cam": "B",
+		"cheer": "J",
+		"chewy": "Q",
+		"dead": "L",
+		"discord": "E",
+		"end": "D",
+		"fatality": "S",
+		"gameOn": "F",
+		"gear": "N",
+		"intro": "M",
+		"letsGo": "R",
+		"mic": "H",
+		"onlyAmiga": "W",
+		"phrasing": "V",
+		"resetDeaths": "X",
+		"room": "O",
+		"startStop": "G",
+		"welcomeTheFuckIn": "K"
+	}
 }

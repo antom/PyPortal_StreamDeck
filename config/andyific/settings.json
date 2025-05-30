@@ -1,19 +1,4 @@
 {
-	"idle": {
-		"duration": 300,
-		"transition": "fade",
-		"keyCodes": {
-			"exit": "ESCAPE"
-		}
-	},
-
-	"page": {
-		"transition": {
-			"initial": "fade",
-			"change": "tile"
-		}
-	},
-
 	"transitions": {
 		"fade": {
 			"step": 0.1,
@@ -21,7 +6,12 @@
 		}
 	},
 
-	"buttons": {
+	"idle": {
+		"duration": 300,
+		"transition": "fade"
+	},
+
+	"image": {
 		"80x80": {
 			"blank": [0, 1],
 			"abort": [2, 3],
@@ -60,507 +50,207 @@
 		}
 	},
 
-	"pages": [
-		[
-			[
-				{
-					"button": "scenes",
-					"page": 1
-				},
+	"button": {
+		"pageNavigation": {
+			"alerts": 3,
+			"brb": 0,
+			"browserSource": 6,
+			"end": 0,
+			"goBack": 0,
+			"intro": 0,
+			"main": 0,
+			"obs": 2,
+			"overlays": 4,
+			"replayLatestCheer": 0,
+			"replayLatestFollower": 0,
+			"replayLatestRaider": 0,
+			"replayLatestSubscriber": 0,
+			"scenes": 1,
+			"sfx": 5
+		},
 
-				{
-					"button": "obs",
-					"page": 2
-				},
-
-				{
-					"button": "overlays",
-					"page": 4
-				},
-
-				{
-					"button": "alerts",
-					"page": 3
-				}
-			],
-
-			[
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "sfx",
-					"page": 5
-				},
-
-				{
-					"button": "browserSource",
-					"page": 6
-				}
-			],
-
-			[
-				{
-					"button": "abort",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_ZERO"
-					]
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
-			]
+		"sendMsg": [
+			"abort",
+			"boop",
+			"brb",
+			"bread",
+			"crystal",
+			"eight",
+			"end",
+			"fridgeNoise",
+			"goodJob",
+			"intro",
+			"main",
+			"mouldyBread",
+			"refreshBrowserSource",
+			"replayLatestCheer",
+			"replayLatestFollower",
+			"replayLatestRaider",
+			"replayLatestSubscriber",
+			"toggleCamera",
+			"toggleEmotes",
+			"toggleGame",
+			"toggleMic"
 		],
 
-		[
+		"repeatAfter": {
+			"eight": 0.8
+		}
+	},
+
+	"page": {
+		"transition": {
+			"initial": "fade",
+			"change": "tile"
+		},
+
+		"layout": [
 			[
-				{
-					"button": "intro",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_ONE"
-					],
-					"page": 0
-				},
-
-				{
-					"button": "main",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_TWO"
-					],
-					"page": 0
-				},
-
-				{
-					"button": "brb",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_THREE"
-					],
-					"page": 0
-				},
-
-				{
-					"button": "end",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_FOUR"
-					],
-					"page": 0
-				}
+				[
+					"scenes",
+					"obs",
+					"overlays",
+					"alerts"
+				],
+				[
+					"blank",
+					"blank",
+					"sfx",
+					"browserSource"
+				],
+				[
+					"abort",
+					"blank",
+					"blank",
+					"blank"
+				]
 			],
 
 			[
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
+				[
+					"intro",
+					"main",
+					"brb",
+					"end"
+				],
+				[
+					"blank",
+					"blank",
+					"blank",
+					"blank"
+				],
+				[
+					"goBack",
+					"blank",
+					"blank",
+					"blank"
+				]
 			],
 
 			[
-				{
-					"button": "goBack",
-					"page": 0
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
-			]
-		],
-
-		[
-			[
-				{
-					"button": "toggleCamera",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_FIVE"
-					]
-				},
-
-				{
-					"button": "toggleGame",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_SIX"
-					]
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "refreshBrowserSource",
-					"keyCodes": [
-						"CONTROL",
-						"COMMAND",
-						"KEYPAD_PERIOD"
-					]
-				},
+				[
+					"toggleCamera",
+					"toggleGame",
+					"blank",
+					"refreshBrowserSource"
+				],
+				[
+					"blank",
+					"blank",
+					"blank",
+					"blank"
+				],
+				[
+					"goBack",
+					"blank",
+					"blank",
+					"toggleMic"
+				]
 			],
 
 			[
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
+				[
+					"replayLatestFollower",
+					"replayLatestSubscriber",
+					"replayLatestCheer",
+					"replayLatestRaider"
+				],
+				[
+					"blank",
+					"blank",
+					"blank",
+					"blank"
+				],
+				[
+					"goBack",
+					"blank",
+					"blank",
+					"blank"
+				]
 			],
 
 			[
-				{
-					"button": "goBack",
-					"page": 0
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "toggleMic",
-					"keyCodes": [
-						"LEFT_SHIFT",
-						"OPTION",
-						"COMMAND",
-						"M"
-					]
-				}
-			]
-		],
-
-		[
-			[
-				{
-					"button": "replayLatestFollower",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_NINE"
-					],
-					"page": 0
-				},
-
-				{
-					"button": "replayLatestSubscriber",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_ZERO"
-					],
-					"page": 0
-				},
-
-				{
-					"button": "replayLatestCheer",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_PERIOD"
-					],
-					"page": 0
-				},
-
-				{
-					"button": "replayLatestRaider",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_ASTERISK"
-					],
-					"page": 0
-				},
+				[
+					"goodJob",
+					"toggleEmotes",
+					"fridgeNoise",
+					"blank"
+				],
+				[
+					"bread",
+					"mouldyBread",
+					"boop",
+					"crystal"
+				],
+				[
+					"goBack",
+					"blank",
+					"blank",
+					"blank"
+				]
 			],
 
 			[
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
+				[
+					"eight",
+					"blank",
+					"blank",
+					"blank"
+				],
+				[
+					"blank",
+					"blank",
+					"blank",
+					"blank"
+				],
+				[
+					"goBack",
+					"blank",
+					"blank",
+					"abort"
+				]
 			],
 
 			[
-				{
-					"button": "goBack",
-					"page": 0
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
-			]
-		],
-
-		[
-			[
-				{
-					"button": "goodJob",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_SEVEN"
-					],
-					"page": 0
-				},
-
-				{
-					"button": "toggleEmotes",
-					"keyCodes": [
-						"CONTROL",
-						"COMMAND",
-						"KEYPAD_ASTERISK"
-					]
-				},
-
-				{
-					"button": "fridgeNoise",
-					"keyCodes": [
-						"CONTROL",
-						"COMMAND",
-						"KEYPAD_TWO"
-					],
-					"page": 0
-				},
-
-				{
-					"button": "blank"
-				}
-			],
-
-			[
-				{
-					"button": "bread",
-					"page": 0
-				},
-
-				{
-					"button": "mouldyBread",
-					"page": 0
-				},
-
-				{
-					"button": "boop",
-					"page": 0
-				},
-
-				{
-					"button": "crystal",
-					"page": 0
-				}
-			]
-
-			[
-				{
-					"button": "goBack",
-					"page": 0
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
-			]
-		],
-
-		[
-			[
-				{
-					"button": "eight",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_EIGHT"
-					],
-					"repeatAfter": 0.8
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
-			],
-
-			[
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
-			],
-
-			[
-				{
-					"button": "goBack",
-					"page": 0
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "abort",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_ZERO"
-					]
-				}
-			]
-		],
-
-		[
-			[
-				{
-					"button": "refreshBrowserSource",
-					"keyCodes": [
-						"CONTROL",
-						"COMMAND",
-						"KEYPAD_PERIOD"
-					]
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
-			],
-
-			[
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
-			],
-
-
-			[
-				{
-					"button": "goBack",
-					"page": 0
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				},
-
-				{
-					"button": "blank"
-				}
+				[
+					"refreshBrowserSource",
+					"blank",
+					"blank",
+					"blank"
+				],
+				[
+					"blank",
+					"blank",
+					"blank",
+					"blank"
+				],
+				[
+					"goBack",
+					"blank",
+					"blank",
+					"blank"
+				]
 			]
 		]
-	]
+	}
 }

@@ -1,14 +1,29 @@
 {
-	"buttons": {
+	"image": {
 		"160x120": {
-			"red": [0, 2],
-			"blue": [1, 3]
+			"redPlus": [0, 3],
+			"redNext": [0, 3],
+			"redPeriod": [0, 3],
+			"redPrevious": [0, 3],
+			"blueMinus": [1, 4],
+			"bluePrevious": [1, 4],
+			"blueAsterisk": [1, 4],
+			"blueNext": [1, 4]
 		},
 
 		"80x80": {
-			"red": [0, 1],
-			"blue": [2, 3],
-			"green": [4, 5]
+			"redOne": [0, 1],
+			"redFour": [0, 1],
+			"redSeven": [0, 1],
+			"redNine": [0, 1],
+			"greenTwo": [4, 5],
+			"greenFive": [4, 5],
+			"greenEight": [4, 5],
+			"greenZero": [4, 5],
+			"blueThree": [2, 3],
+			"blueSix": [2, 3],
+			"bluePrevious": [2, 3],
+			"blueNext": [2, 3]
 		}
 	},
 
@@ -16,174 +31,82 @@
 		"transition": {
 			"initial": "fade",
 			"change": "fade"
-		}
-	},
+		},
 
-	"pages": [
-		[
+		"layout": [
 			[
-				{
-					"button": "red",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_PLUS"
-					]
-				},
+				[
+					"redPlus",
+					"blueMinus"
+				],
 
-				{
-					"button": "blue",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_MINUS"
-					]
-				}
-			],
-
-			[
-				{
-					"button": "blue",
-					"page": "previous"
-				},
-
-				{
-					"button": "red",
-					"page": "next"
-				}
-			]
-		],
-
-		[
-			[
-				{
-					"button": "blue",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_ASTERISK"
+				[
+					"bluePrevious",
+					"redNext",
 				]
-				},
-
-				{
-					"button": "red",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_PERIOD"
-					]
-				}
 			],
 
 			[
+				[
+					"blueAsterisk",
+					"redPeriod"
+				],
 
-				{
-					"button": "red",
-					"page": "previous"
-				},
+				[
 
-				{
-					"button": "blue",
-					"page": "next"
-				}
-			]
-		],
-
-		,
-
-		[
-			[
-				{
-					"button": "red",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_ONE"
-					]
-				},
-
-				{
-					"button": "green",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_TWO"
-					]
-				},
-
-				{
-					"button": "blue",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_THREE"
-					]
-				},
-
-				{
-					"button": "red",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_FOUR"
-					]
-				}
+					"redPrevious",
+					"blueNext",
+				]
 			],
 
 			[
+				[
+					"redOne",
+					"greenTwo",
+					"blueThree"
+					"redFour"
+				],
 
-				{
-					"button": "green",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_FIVE"
-					]
-				},
+				[
+					"greenFive",
+					"blueSix",
+					"redSeven",
+					"greenEight"
+				],
 
-				{
-					"button": "blue",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_SIX"
-					]
-				},
-
-				{
-					"button": "red",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_SEVEN"
-					]
-				},
-
-				{
-					"button": "green",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_EIGHT"
-					]
-				}
-			],
-
-			[
-				{
-					"button": "blue",
-					"page": "previous"
-				},
-
-				{
-					"button": "red",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_NINE"
-					]
-				},
-
-				{
-					"button": "green",
-					"keyCodes": [
-						"CONTROL",
-						"KEYPAD_ZERO"
-					]
-				},
-
-				{
-					"button": "blue",
-					"page": "next"
-				}
+				[
+					"bluePrevious",
+					"redNine",
+					"greenZero",
+					"blueNext"
+				]
 			]
 		]
-	]
+	},
+
+	"buttons": {
+		"pageNavigation": {
+			"bluePrevious": "previous",
+			"redPrevious": "previous",
+			"blueNext": "next",
+			"redNext": "next"
+		},
+
+		"sendMsg": [
+			"redPlus",
+			"blueMinus",
+			"blueAsterisk",
+			"redPeriod",
+			"redOne",
+			"greenTwo",
+			"blueThree",
+			"redFour",
+			"greenFive",
+			"blueSix",
+			"redSeven",
+			"greenEight",
+			"redNine",
+			"greenZero"
+		],
+	}
 }

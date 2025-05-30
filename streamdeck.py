@@ -1,14 +1,13 @@
 import adafruit_touchscreen
 import board
 import displayio
+import gc
 import json
 import math
 import time
-import usb_hid
+import adafruit_imageload
+import usb_cdc
 
-from adafruit_hid.keyboard import Keyboard
-from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
-from adafruit_hid.keycode import Keycode
 from secrets import secrets
 
 debugging = secrets.get('streamDeckDebug', 0)
@@ -19,12 +18,51 @@ theme = secrets.get('streamDeckTheme', 'Default')
 with open('/config/{}/settings.json'.format(theme)) as themeJSON:
 	themeConfig = json.load(themeJSON)
 
+pageLayout = themeConfig.get('page', {}).get('layout', {})
+
+# Keyboard Configuration
+hasKeyCodes = 0
+
+if themeConfig.get('keyCodes', None) is not None:
+	hasKeyCodes = 1
+
+	import usb_hid
+
+	from adafruit_hid.keyboard import Keyboard
+	from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
+	from adafruit_hid.keycode import Keycode
+
 # Image Configuration
 imgPath = '/config/{}/img/'.format(theme)
 
 # Functions
+def log(value):
+	if debugging:
+		print(str(value))
+
+def sendMsg(type, value):
+	usb_cdc.data.write(type + ': ' + str(value) + "\r\n")
+
 def hasElapsedSince(duration, time):
 	return int(duration is not None and currentTime >= (time + duration))
+
+def loadImage(filePath, loadFromDisk = 1):
+	gc.collect()
+
+	if loadFromDisk:
+		img = displayio.OnDiskBitmap(
+			imgPath + filePath
+		)
+		pixelShader = img.pixel_shader
+	else:
+		img, pixelShader = adafruit_imageload.load(
+			imgPath + filePath
+		)
+
+	return {
+		'img': img,
+		'pixelShader': pixelShader
+	}
 
 def getCurrentTouch():
 	time.sleep(0.05)
@@ -42,7 +80,7 @@ def getCurrentTouch():
 		}
 
 def getCurrentButton():
-	return themeConfig['pages'][currentPage][currentTouch['y']][currentTouch['x']]
+	return pageLayout[currentPage][currentTouch['y']][currentTouch['x']]
 
 def getKeyCode(value):
 	return getattr(Keycode, value)
@@ -60,10 +98,10 @@ def sendKeyCodes(keyCodes):
 		)
 
 def getPageRows(page):
-	return len(themeConfig['pages'][page])
+	return len(pageLayout[page])
 
 def getPageColumns(page):
-	return len(themeConfig['pages'][page][0])
+	return len(pageLayout[page][0])
 
 def getTileWidth(page):
 	return math.floor(board.DISPLAY.width / getPageColumns(page))
@@ -74,9 +112,9 @@ def getTileHeight(page):
 def setBacklight(value: float):
 	value = max(0, min(1.0, value))
 	board.DISPLAY.brightness = value
-
-	if debugging:
-		print('Backlight: ' + str(board.DISPLAY.brightness))
+	log(
+		'setBacklight({0})'.format(board.DISPLAY.brightness)
+	)
 
 def transitionIn(transitionType):
 	if transitionType is None:
@@ -119,45 +157,37 @@ def fadeTo(value, startFrom = None):
 			setBacklight(board.DISPLAY.brightness - transitionStep)
 			time.sleep(transitionSpeed)
 
-def getBtnTileGrids():
-	btnTileGrids = {}
+def getBtnTileGrid(tileWidth, tileHeight):
+	log(
+		'getBtnTileGrid({0}, {1})'.format(tileWidth, tileHeight)
+	)
 
-	for page in range(0, len(themeConfig['pages'])):
-		tileWidth = getTileWidth(page)
-		tileHeight = getTileHeight(page)
-		size = '{0}x{1}'.format(tileWidth, tileHeight)
+	btns = loadImage(
+		'{0}x{1}.bmp'.format(tileWidth, tileHeight),
+		themeConfig.get('page', {}).get('loadFromDisk', 1)
+	)
 
-		if size not in btnTileGrids:
-			if debugging:
-				print('Loading {}.bmp'.format(size))
-
-			btns = displayio.OnDiskBitmap(
-				imgPath + '{}.bmp'.format(size)
-			)
-
-			btnTileGrids[size] = displayio.TileGrid(
-				btns,
-				pixel_shader = btns.pixel_shader,
-				width = math.floor(board.DISPLAY.width / tileWidth),
-				height = math.floor(board.DISPLAY.height / tileHeight),
-				tile_width = tileWidth,
-				tile_height = tileHeight
-			)
-
-	return btnTileGrids
+	return displayio.TileGrid(
+		btns['img'],
+		pixel_shader = btns['pixelShader'],
+		width = math.floor(board.DISPLAY.width / tileWidth),
+		height = math.floor(board.DISPLAY.height / tileHeight),
+		tile_width = tileWidth,
+		tile_height = tileHeight
+	)
 
 def setTile(touch, state = 0):
 	if type(touch['x']) is int and type(touch['y']) is int:
 		size = '{0}x{1}'.format(getTileWidth(currentPage), getTileHeight(currentPage))
-		btn = themeConfig['pages'][currentPage][touch['y']][touch['x']]['button']
-		btnTileGrids[size][touch['x'], touch['y']] = themeConfig['buttons'][size][btn][state]
-		board.DISPLAY.refresh()
+		btn = pageLayout[currentPage][touch['y']][touch['x']]
+		displayGroup[0][touch['x'], touch['y']] = themeConfig['image'][size][btn][state]
 
-
-def setPage(index, refreshAfterUpdate = 1):
+def setPage(index):
 	global currentPage
 
-	if index < 0 or index >= len(themeConfig['pages']):
+	pageLayout = themeConfig.get('page', {}).get('layout', {});
+
+	if index < 0 or index >= len(pageLayout):
 		return
 
 	previousPage = currentPage
@@ -165,17 +195,22 @@ def setPage(index, refreshAfterUpdate = 1):
 
 	if previousPage is None:
 		displayGroup.append(
-			btnTileGrids.get(
-				'{0}x{1}'.format(getTileWidth(currentPage), getTileHeight(currentPage))
+			getBtnTileGrid(
+				getTileWidth(currentPage),
+				getTileHeight(currentPage)
 			)
 		)
 	elif getPageRows(currentPage) != getPageRows(previousPage) or getPageColumns(currentPage) != getPageColumns(previousPage):
-		displayGroup[0] = btnTileGrids.get(
-			'{0}x{1}'.format(getTileWidth(currentPage), getTileHeight(currentPage))
+		displayGroup[0] = getBtnTileGrid(
+			getTileWidth(currentPage),
+			getTileHeight(currentPage)
 		)
 
-	if debugging:
-		print('Current page: ' + str(currentPage))
+		gc.collect()
+
+	log('setPage({})'.format(currentPage))
+
+	refreshAfterTileUpdate = int(themeConfig.get('page', {}).get('transition', {}).get('change', None) == 'tile')
 
 	for tileY in range(0, getPageRows(currentPage)):
 		for tileX in range(0, getPageColumns(currentPage)):
@@ -184,14 +219,20 @@ def setPage(index, refreshAfterUpdate = 1):
 				'y': tileY
 			})
 
+			if refreshAfterTileUpdate:
+				board.DISPLAY.refresh()
+
+	if not refreshAfterTileUpdate:
+		board.DISPLAY.refresh()
+
 def prevPage():
 	if currentPage > 0:
 		setPage(currentPage - 1)
 	else:
-		setPage(len(themeConfig['pages']) - 1)
+		setPage(len(pageLayout) - 1)
 
 def nextPage():
-	if currentPage < len(themeConfig['pages']) - 1:
+	if currentPage < len(pageLayout) - 1:
 		setPage(currentPage + 1)
 	else:
 		setPage(0)
@@ -200,18 +241,18 @@ def displaySplashScreen():
 	if themeConfig.get('splash', None) is None:
 		return
 
-	if debugging:
-		print('Displaying Splash Screen')
+	log('displaySplashScreen()')
 
 	setBacklight(0)
 
-	splash = displayio.OnDiskBitmap(
-		imgPath + themeConfig.get('splash', {}).get('image', 'Splash.bmp')
+	splash = loadImage(
+		themeConfig.get('splash', {}).get('image', 'Splash.bmp'),
+		themeConfig.get('splash', {}).get('loadFromDisk', 1)
 	)
 
 	splashGrid = displayio.TileGrid(
-		splash,
-		pixel_shader = splash.pixel_shader
+		splash['img'],
+		pixel_shader = splash['pixelShader']
 	)
 
 	displayGroup.append(
@@ -257,9 +298,10 @@ touchScreen = adafruit_touchscreen.Touchscreen(
 	)
 )
 
-# Initialise keyboards
-keyboard = Keyboard(usb_hid.devices)
-keyboard_layout = KeyboardLayoutUS(keyboard)
+# Initialise keyboards (if acting as a keyboard)
+if hasKeyCodes:
+	keyboard = Keyboard(usb_hid.devices)
+	keyboard_layout = KeyboardLayoutUS(keyboard)
 
 # Initialise display group
 displayGroup = displayio.Group()
@@ -274,7 +316,6 @@ if board.DISPLAY.brightness > 0:
 	setBacklight(0)
 
 # Configure initial values
-btnTileGrids = getBtnTileGrids()
 currentPage = None
 currentTouch = getCurrentTouch()
 previousTouch = currentTouch
@@ -310,8 +351,7 @@ while True:
 	# check & handle entering/exiting idle state
 	if hasElapsedSince(idleDuration, timeStateChanged):
 		if not idleMode and currentTouch['x'] is None and currentTouch['y'] is None:
-			if debugging:
-				print('Entering idle mode')
+			log('idleEnter')
 
 			idleMode = 1
 
@@ -320,18 +360,27 @@ while True:
 			)
 
 			sendKeyCodes(
-				themeConfig.get('idle', {}).get('keyCodes', {}).get('enter', None)
+				themeConfig.get('keyCodes', {}).get('idleEnter', None)
+			)
+
+			sendMsg(
+				'idle',
+				'enter'
 			)
 
 			continue
 		elif idleMode and type(previousTouch['x']) is int and type(previousTouch['y']) is int:
-			if debugging:
-				print('Exiting idle mode')
+			log('idleExit')
 
 			idleMode = 0
 
 			sendKeyCodes(
-				themeConfig.get('idle', {}).get('keyCodes', {}).get('exit', None)
+				themeConfig.get('keyCodes', {}).get('idleExit', None)
+			)
+
+			sendMsg(
+				'idle'
+				'exit'
 			)
 
 			transitionIn(
@@ -351,9 +400,11 @@ while True:
 			previousTouch
 		)
 
+		board.DISPLAY.refresh()
+
 		# if a previously-touched button is used for pagination, trigger it
 		if previousButton and currentTouch['x'] is None and currentTouch['y'] is None:
-			buttonPage = previousButton.get('page', None)
+			buttonPage = themeConfig.get('button', {}).get('pageNavigation', {}).get(previousButton, None)
 
 			if buttonPage is not None:
 				transitionOut(
@@ -390,15 +441,13 @@ while True:
 
 		# unless specified to repeat after a defined delay, skip triggering the button if we've previously triggered it
 		if currentButton == previousButton:
-			repeatAfter = previousButton.get('repeatAfter', themeConfig.get('repeatAfter', None))
+			repeatAfter = themeConfig.get('button', {}).get('repeatAfter', {}).get(previousButton, None)
 
 			if hasElapsedSince(repeatAfter, timeTouched):
 				timeTouched = currentTime
 			else:
 				continue
 
-		if debugging:
-			print(currentButton)
 
 		# set the tile for the button currently being touched
 		setTile(
@@ -406,10 +455,20 @@ while True:
 			1
 		)
 
-		# send the button's defined keys
-		sendKeyCodes(
-			currentButton.get('keyCodes', None)
-		)
+		board.DISPLAY.refresh()
+
+		# send communication (as serial message or keycodes)
+		sendsMsg = currentButton in themeConfig.get('button', {}).get('sendMsg', [])
+
+		if sendsMsg:
+			sendMsg(
+				'btn',
+				currentButton
+			)
+		else:
+			sendKeyCodes(
+				themeConfig.get('keyCodes', {}).get(currentButton, None)
+			)
 
 		# make a note of what button we've just used
 		previousButton = currentButton
